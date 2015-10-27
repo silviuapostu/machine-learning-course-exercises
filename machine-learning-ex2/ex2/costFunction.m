@@ -21,10 +21,19 @@ grad = zeros(size(theta));
 %
 
 
+% J = 1 / m * (-log(sigmoid(X(i,:)))' * y - log(ones(m) - sigmoid(X(i,:)))' * (ones(m) - y));
 
 
+for i = 1:m
+  term1 = -log(sigmoid(X(i,:) * theta)) * y(i);
+  term2 = (1 - y(i)) * log(1 - sigmoid(X(i,:) * theta));
+  J += term1 - term2;
+endfor
+J = J / m;
 
-
+for j = 1:size(theta)
+  grad(j) = 1 / m * X(:,j)' * (sigmoid(X * theta) - y);
+endfor
 
 
 % =============================================================
