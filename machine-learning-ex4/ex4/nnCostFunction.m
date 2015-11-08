@@ -68,11 +68,24 @@ sparsey = sparse(y, 1:m, 1, num_labels, m);
 y = full(sparsey);
 J = 0;
 for j = 1:m
-  a2 = [1 sigmoid(X(j,:) * Theta1')];
-  a3 = sigmoid(a2 * Theta2');
+  a1 = X(j,:);
+  z2 = a1 * Theta1';
+  a2 = [1 sigmoid(z2)];
+  z3 = a2 * Theta2';
+  a3 = sigmoid(z3);
+  delta3 = a3' - y(:,j);
+  error2 = Theta2' * delta3;
+  delta2 = error2(2:end) .* sigmoidGradient(z2)';
+  Theta1_grad += delta2 * a1;
+  Theta2_grad += delta3 * a2;
   J += -log(a3) * y(:,j) - log(ones(1,num_labels) - a3) * (ones(1,num_labels)' - y(:,j));
 endfor
-J = (J + lambda / 2 * (sum(sum(Theta1(:,2:end) .^ 2)) + sum(sum(Theta2(:,2:end) .^ 2)))) / m;
+J = (J + lambda / 2 * (sum(sum(Theta1(:,2:end).^2)) + sum(sum(Theta2(:,2:end).^2)))) / m;
+Theta1_grad *= 1/m;
+Theta1_grad(:,2:end) += lambda/m .* Theta1(:,2:end);
+Theta2_grad *= 1/m;
+Theta2_grad(:,2:end) += lambda/m .* Theta2(:,2:end);
+
 
 
 
